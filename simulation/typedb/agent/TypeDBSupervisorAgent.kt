@@ -22,8 +22,8 @@ import com.vaticle.typedb.iam.simulation.common.concept.Company
 import com.vaticle.typedb.iam.simulation.typedb.Labels.PARENT_COMPANY_NAME
 import com.vaticle.typedb.iam.simulation.typedb.Util.cvar
 import com.vaticle.typedb.iam.simulation.typedb.concept.TypeDBSubject
-import com.vaticle.typedb.simulation.common.seed.RandomSource
-import com.vaticle.typedb.simulation.typedb.TypeDBClient
+import com.vaticle.typedb.benchmark.framework.common.seed.RandomSource
+import com.vaticle.typedb.benchmark.framework.typedb.TypeDBClient
 import com.vaticle.typeql.lang.TypeQL.*
 import kotlin.streams.toList
 
@@ -40,7 +40,7 @@ class TypeDBSupervisorAgent(client: TypeDBClient, context:Context): SupervisorAg
                     match(
                         cvar(S).isa(group.type).has(group.idType, group.idValue).has(PARENT_COMPANY_NAME, company.name),
                         cvar(S_MEMBER).isa(member.type).has(member.idType, member.idValue).has(PARENT_COMPANY_NAME, company.name),
-                        rel(PARENT_GROUP, S).rel(GROUP_MEMBER, S_MEMBER).isa(GROUP_MEMBERSHIP)
+                        rel(PARENT_GROUP, cvar(S)).rel(GROUP_MEMBER, cvar(S_MEMBER)).isa(GROUP_MEMBERSHIP)
                     )
                 ).toList().isNotEmpty()
             ) return listOf()
@@ -52,10 +52,10 @@ class TypeDBSupervisorAgent(client: TypeDBClient, context:Context): SupervisorAg
                     cvar(S).isa(group.type).has(group.idType, group.idValue),
                     cvar(S_MEMBER).isa(member.type).has(member.idType, member.idValue),
                     cvar(C).isa(COMPANY).has(NAME, company.name),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, S).isa(COMPANY_MEMBERSHIP),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, S_MEMBER).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(S)).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(S_MEMBER)).isa(COMPANY_MEMBERSHIP),
                 ).insert(
-                    rel(PARENT_GROUP, S).rel(GROUP_MEMBER, S_MEMBER).isa(GROUP_MEMBERSHIP),
+                    rel(PARENT_GROUP, cvar(S)).rel(GROUP_MEMBER, cvar(S_MEMBER)).isa(GROUP_MEMBERSHIP),
                 )
             )
 
@@ -77,7 +77,7 @@ class TypeDBSupervisorAgent(client: TypeDBClient, context:Context): SupervisorAg
                     cvar(S_MEMBER_ID).isaX(cvar(S_MEMBER_ID_TYPE)),
                     cvar(S_MEMBER_TYPE).sub(SUBJECT),
                     cvar(S_MEMBER_ID_TYPE).sub(ID),
-                    rel(PARENT_GROUP, S).rel(GROUP_MEMBER, S_MEMBER).isa(GROUP_MEMBERSHIP),
+                    rel(PARENT_GROUP, cvar(S)).rel(GROUP_MEMBER, cvar(S_MEMBER)).isa(GROUP_MEMBERSHIP),
                 )
             ).toList().map { TypeDBSubject(it[S_MEMBER_TYPE], it[S_MEMBER_ID_TYPE], it[S_MEMBER_ID]) }
         }
@@ -91,9 +91,9 @@ class TypeDBSupervisorAgent(client: TypeDBClient, context:Context): SupervisorAg
                     cvar(S).isa(group.type).has(group.idType, group.idValue),
                     cvar(S_MEMBER).isa(member.type).has(member.idType, member.idValue),
                     cvar(C).isa(COMPANY).has(NAME, company.name),
-                    cvar(ME).rel(PARENT_GROUP, S).rel(GROUP_MEMBER, S_MEMBER).isa(GROUP_MEMBERSHIP),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, S).isa(COMPANY_MEMBERSHIP),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, S_MEMBER).isa(COMPANY_MEMBERSHIP),
+                    cvar(ME).rel(PARENT_GROUP, cvar(S)).rel(GROUP_MEMBER, cvar(S_MEMBER)).isa(GROUP_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(S)).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(S_MEMBER)).isa(COMPANY_MEMBERSHIP),
                 ).delete(
                     cvar(ME).isa(GROUP_MEMBERSHIP),
                 )

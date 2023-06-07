@@ -40,8 +40,8 @@ import com.vaticle.typedb.iam.simulation.typedb.Labels.PARENT_COMPANY_NAME
 import com.vaticle.typedb.iam.simulation.typedb.Labels.POLICY_NAME
 import com.vaticle.typedb.iam.simulation.typedb.Labels.SEGREGATION_VIOLATION
 import com.vaticle.typedb.iam.simulation.typedb.Util.cvar
-import com.vaticle.typedb.simulation.common.seed.RandomSource
-import com.vaticle.typedb.simulation.typedb.TypeDBClient
+import com.vaticle.typedb.benchmark.framework.common.seed.RandomSource
+import com.vaticle.typedb.benchmark.framework.typedb.TypeDBClient
 import com.vaticle.typeql.lang.TypeQL.*
 import java.lang.Exception
 import kotlin.streams.toList
@@ -60,8 +60,8 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                     cvar(O).isaX(cvar(O_TYPE)).has(PARENT_COMPANY_NAME, company.name).has(cvar(O_ID)),
                     cvar(O_ID).isaX(cvar(O_ID_TYPE)),
                     cvar(A).isaX(cvar(A_TYPE)).has(PARENT_COMPANY_NAME, company.name).has(ACTION_NAME, cvar(A_NAME)),
-                    cvar(AC).rel(ACCESSED_OBJECT, O).rel(VALID_ACTION, A).isa(ACCESS),
-                    cvar(P).rel(PERMITTED_SUBJECT, S).rel(PERMITTED_ACCESS, AC).isa(PERMISSION)
+                    cvar(AC).rel(ACCESSED_OBJECT, cvar(O)).rel(VALID_ACTION, cvar(A)).isa(ACCESS),
+                    cvar(P).rel(PERMITTED_SUBJECT, cvar(S)).rel(PERMITTED_ACCESS, cvar(AC)).isa(PERMISSION)
                         .has(VALIDITY, cvar(P_VALIDITY))
                         .has(REVIEW_DATE, cvar(P_DATE)),
                     cvar(P_DATE).lte(iterationDate(context.iterationNumber)),
@@ -98,8 +98,8 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                     cvar(O).isaX(cvar(O_TYPE)).has(PARENT_COMPANY_NAME, company.name).has(cvar(O_ID)),
                     cvar(O_ID).isaX(cvar(O_ID_TYPE)),
                     cvar(A).isaX(cvar(A_TYPE)).has(PARENT_COMPANY_NAME, company.name).has(ACTION_NAME, cvar(A_NAME)),
-                    cvar(AC).rel(ACCESSED_OBJECT, O).rel(VALID_ACTION, A).isa(ACCESS),
-                    cvar(P).rel(PERMITTED_SUBJECT, S).rel(PERMITTED_ACCESS, AC).isa(PERMISSION)
+                    cvar(AC).rel(ACCESSED_OBJECT, cvar(O)).rel(VALID_ACTION, cvar(A)).isa(ACCESS),
+                    cvar(P).rel(PERMITTED_SUBJECT, cvar(S)).rel(PERMITTED_ACCESS, cvar(AC)).isa(PERMISSION)
                         .has(VALIDITY, cvar(P_VALIDITY))
                         .has(REVIEW_DATE, cvar(P_DATE)),
                     cvar(P_DATE).lte(iterationDate(context.iterationNumber)),
@@ -133,12 +133,12 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                         cvar(S).isa(permittedSubject.type).has(permittedSubject.idType, permittedSubject.idValue),
                         cvar(O).isa(accessedObject.type).has(accessedObject.idType, accessedObject.idValue),
                         cvar(A).isa(validAction.type).has(validAction.idType, validAction.idValue),
-                        cvar(AC).rel(ACCESSED_OBJECT, O).rel(VALID_ACTION, A).isa(ACCESS),
-                        cvar(P).rel(PERMITTED_SUBJECT, S).rel(PERMITTED_ACCESS, AC).isa(PERMISSION),
+                        cvar(AC).rel(ACCESSED_OBJECT, cvar(O)).rel(VALID_ACTION, cvar(A)).isa(ACCESS),
+                        cvar(P).rel(PERMITTED_SUBJECT, cvar(S)).rel(PERMITTED_ACCESS, cvar(AC)).isa(PERMISSION),
                         cvar(C).isa(COMPANY).has(NAME, company.name),
-                        rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, S).isa(COMPANY_MEMBERSHIP),
-                        rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, O).isa(COMPANY_MEMBERSHIP),
-                        rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, A).isa(COMPANY_MEMBERSHIP),
+                        rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(S)).isa(COMPANY_MEMBERSHIP),
+                        rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(O)).isa(COMPANY_MEMBERSHIP),
+                        rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(A)).isa(COMPANY_MEMBERSHIP),
                     ).delete(
                         cvar(P).isa(PERMISSION),
                     )
@@ -150,13 +150,13 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                             cvar(S).isa(permittedSubject.type).has(permittedSubject.idType, permittedSubject.idValue),
                             cvar(O).isa(accessedObject.type).has(accessedObject.idType, accessedObject.idValue),
                             cvar(A).isa(validAction.type).has(validAction.idType, validAction.idValue),
-                            cvar(AC).rel(ACCESSED_OBJECT, O).rel(VALID_ACTION, A).isa(ACCESS),
+                            cvar(AC).rel(ACCESSED_OBJECT, cvar(O)).rel(VALID_ACTION, cvar(A)).isa(ACCESS),
                             cvar(C).isa(COMPANY).has(NAME, company.name),
-                            rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, S).isa(COMPANY_MEMBERSHIP),
-                            rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, O).isa(COMPANY_MEMBERSHIP),
-                            rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, A).isa(COMPANY_MEMBERSHIP),
+                            rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(S)).isa(COMPANY_MEMBERSHIP),
+                            rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(O)).isa(COMPANY_MEMBERSHIP),
+                            rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(A)).isa(COMPANY_MEMBERSHIP),
                         ).insert(
-                            rel(PERMITTED_SUBJECT, S).rel(PERMITTED_ACCESS, AC).isa(PERMISSION)
+                            rel(PERMITTED_SUBJECT, cvar(S)).rel(PERMITTED_ACCESS, cvar(AC)).isa(PERMISSION)
                                 .has(REVIEW_DATE, iterationDate(context.iterationNumber + context.model.permissionReviewAge))
                         )
                     )
@@ -181,7 +181,7 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                     match(
                         cvar(A1).isa(action1.type).has(action1.idType, action1.idValue).has(PARENT_COMPANY_NAME, company.name),
                         cvar(A2).isa(action2.type).has(action2.idType, action2.idValue).has(PARENT_COMPANY_NAME, company.name),
-                        rel(SEGREGATED_ACTION, A1).rel(SEGREGATED_ACTION, A2).isa(SEGREGATION_POLICY).has(POLICY_NAME, policyName)
+                        rel(SEGREGATED_ACTION, cvar(A1)).rel(SEGREGATED_ACTION, cvar(A2)).isa(SEGREGATION_POLICY).has(POLICY_NAME, policyName)
                     )
                 ).toList().isNotEmpty()
             ) return listOf()
@@ -193,10 +193,10 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                     cvar(A1).isa(action1.type).has(action1.idType, action1.idValue),
                     cvar(A2).isa(action2.type).has(action2.idType, action2.idValue),
                     cvar(C).isa(COMPANY).has(NAME, company.name),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, A1).isa(COMPANY_MEMBERSHIP),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, A2).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(A1)).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(A2)).isa(COMPANY_MEMBERSHIP),
                 ).insert(
-                    rel(SEGREGATED_ACTION, A1).rel(SEGREGATED_ACTION, A2).isa(SEGREGATION_POLICY).has(POLICY_NAME, policyName),
+                    rel(SEGREGATED_ACTION, cvar(A1)).rel(SEGREGATED_ACTION, cvar(A2)).isa(SEGREGATION_POLICY).has(POLICY_NAME, policyName),
                 )
             )
 
@@ -217,7 +217,7 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                     cvar(A1_NAME).lt(cvar(A2_NAME)),
                     cvar(A1_TYPE).sub(ACTION),
                     cvar(A2_TYPE).sub(ACTION),
-                    rel(SEGREGATED_ACTION, A1).rel(SEGREGATED_ACTION, A2).isa(SEGREGATION_POLICY).has(POLICY_NAME, SP_NAME),
+                    rel(SEGREGATED_ACTION, cvar(A1)).rel(SEGREGATED_ACTION, cvar(A2)).isa(SEGREGATION_POLICY).has(POLICY_NAME, SP_NAME),
                 )
             ).toList().map {
                 TypeDBSegregationPolicy(
@@ -242,7 +242,7 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                     cvar(A1_NAME).lt(cvar(A2_NAME)),
                     cvar(A1_TYPE).sub(ACTION),
                     cvar(A2_TYPE).sub(ACTION),
-                    rel(SEGREGATED_ACTION, A1).rel(SEGREGATED_ACTION, A2).isa(SEGREGATION_POLICY).has(POLICY_NAME, SP_NAME),
+                    rel(SEGREGATED_ACTION, cvar(A1)).rel(SEGREGATED_ACTION, cvar(A2)).isa(SEGREGATION_POLICY).has(POLICY_NAME, SP_NAME),
                 )
             ).toList().map {
                 TypeDBSegregationPolicy(
@@ -264,9 +264,9 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                     cvar(A1).isa(action1.type).has(action1.idType, action1.idValue),
                     cvar(A2).isa(action2.type).has(action2.idType, action2.idValue),
                     cvar(C).isa(COMPANY).has(NAME, company.name),
-                    cvar(SP).rel(SEGREGATED_ACTION, A1).rel(SEGREGATED_ACTION, A2).isa(SEGREGATION_POLICY),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, A1).isa(COMPANY_MEMBERSHIP),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, A2).isa(COMPANY_MEMBERSHIP),
+                    cvar(SP).rel(SEGREGATED_ACTION, cvar(A1)).rel(SEGREGATED_ACTION, cvar(A2)).isa(SEGREGATION_POLICY),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(A1)).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(A2)).isa(COMPANY_MEMBERSHIP),
                 ).delete(
                     cvar(SP).isa(SEGREGATION_POLICY),
                 )
@@ -290,13 +290,13 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                     cvar(O_ID).isaX(cvar(O_ID_TYPE)),
                     cvar(A1).isa(ACTION).has(PARENT_COMPANY_NAME, company.name).has(ACTION_NAME, cvar(A1_NAME)),
                     cvar(A2).isa(ACTION).has(PARENT_COMPANY_NAME, company.name).has(ACTION_NAME, cvar(A2_NAME)),
-                    cvar(SP).rel(SEGREGATED_ACTION, A1).rel(SEGREGATED_ACTION, A2).isa(SEGREGATION_POLICY).has(POLICY_NAME, SP_NAME),
+                    cvar(SP).rel(SEGREGATED_ACTION, cvar(A1)).rel(SEGREGATED_ACTION, cvar(A2)).isa(SEGREGATION_POLICY).has(POLICY_NAME, SP_NAME),
                     cvar(A1_NAME).lt(cvar(A2_NAME)),
                     cvar(S_TYPE).sub(SUBJECT),
                     cvar(S_ID_TYPE).sub(ID),
                     cvar(O_TYPE).sub(OBJECT),
                     cvar(O_ID_TYPE).sub(ID),
-                    rel(VIOLATING_SUBJECT, S).rel(VIOLATING_OBJECT, O).rel(VIOLATED_POLICY).isa(SEGREGATION_VIOLATION),
+                    rel(VIOLATING_SUBJECT, cvar(S)).rel(VIOLATING_OBJECT, cvar(O)).rel(cvar(VIOLATED_POLICY)).isa(SEGREGATION_VIOLATION),
                 )
             ).toList().map {
                 TypeDBSegregationViolation(
@@ -328,13 +328,13 @@ class TypeDBPolicyManagerAgent(client: TypeDBClient, context:Context): PolicyMan
                     cvar(O_ID).isaX(cvar(O_ID_TYPE)),
                     cvar(A1).isa(ACTION).has(PARENT_COMPANY_NAME, company.name).has(ACTION_NAME, cvar(A1_NAME)),
                     cvar(A2).isa(ACTION).has(PARENT_COMPANY_NAME, company.name).has(ACTION_NAME, cvar(A2_NAME)),
-                    cvar(SP).rel(SEGREGATED_ACTION, A1).rel(SEGREGATED_ACTION, A2).isa(SEGREGATION_POLICY).has(POLICY_NAME, SP_NAME),
+                    cvar(SP).rel(SEGREGATED_ACTION, cvar(A1)).rel(SEGREGATED_ACTION, cvar(A2)).isa(SEGREGATION_POLICY).has(POLICY_NAME, SP_NAME),
                     cvar(A1_NAME).lt(cvar(A2_NAME)),
                     cvar(S_TYPE).sub(SUBJECT),
                     cvar(S_ID_TYPE).sub(ID),
                     cvar(O_TYPE).sub(OBJECT),
                     cvar(O_ID_TYPE).sub(ID),
-                    rel(VIOLATING_SUBJECT, S).rel(VIOLATING_OBJECT, O).rel(VIOLATED_POLICY).isa(SEGREGATION_VIOLATION),
+                    rel(VIOLATING_SUBJECT, cvar(S)).rel(VIOLATING_OBJECT, cvar(O)).rel(cvar(VIOLATED_POLICY)).isa(SEGREGATION_VIOLATION),
                 )
             ).toList().map {
                 TypeDBSegregationViolation(

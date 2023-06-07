@@ -3,7 +3,7 @@ package com.vaticle.typedb.iam.simulation.typedb.concept
 import com.vaticle.typedb.iam.simulation.common.SeedData
 import com.vaticle.typedb.iam.simulation.typedb.Labels.DATABASE
 import com.vaticle.typedb.iam.simulation.typedb.Labels.NAME
-import com.vaticle.typedb.simulation.common.seed.RandomSource
+import com.vaticle.typedb.benchmark.framework.common.seed.RandomSource
 
 data class TypeDBDatabase(val name: String) : TypeDBObject(DATABASE, NAME, name) {
     companion object {

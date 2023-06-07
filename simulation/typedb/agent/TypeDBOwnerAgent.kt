@@ -24,8 +24,8 @@ import com.vaticle.typedb.iam.simulation.typedb.Labels.USER_GROUP
 import com.vaticle.typedb.iam.simulation.common.concept.Company
 import com.vaticle.typedb.iam.simulation.typedb.Labels.PARENT_COMPANY_NAME
 import com.vaticle.typedb.iam.simulation.typedb.Util.cvar
-import com.vaticle.typedb.simulation.common.seed.RandomSource
-import com.vaticle.typedb.simulation.typedb.TypeDBClient
+import com.vaticle.typedb.benchmark.framework.common.seed.RandomSource
+import com.vaticle.typedb.benchmark.framework.typedb.TypeDBClient
 import com.vaticle.typeql.lang.TypeQL.*
 import kotlin.streams.toList
 
@@ -42,7 +42,7 @@ class TypeDBOwnerAgent(client: TypeDBClient, context:Context): OwnerAgent<TypeDB
                     match(
                         cvar(S).isa(group.type).has(group.idType, group.idValue).has(PARENT_COMPANY_NAME, company.name),
                         cvar(S_OWNER).isa(owner.type).has(owner.idType, owner.idValue).has(PARENT_COMPANY_NAME, company.name),
-                        rel(OWNED_GROUP, S).rel(GROUP_OWNER, S_OWNER).isa(GROUP_OWNERSHIP)
+                        rel(OWNED_GROUP, cvar(S)).rel(GROUP_OWNER, cvar(S_OWNER)).isa(GROUP_OWNERSHIP)
                     )
                 ).toList().isNotEmpty()
             ) return listOf()
@@ -53,8 +53,8 @@ class TypeDBOwnerAgent(client: TypeDBClient, context:Context): OwnerAgent<TypeDB
                 match(
                     cvar(S).isa(group.type).has(group.idType, group.idValue),
                     cvar(C).isa(COMPANY).has(NAME, company.name),
-                    cvar(OW).rel(OWNED_GROUP, S).isa(GROUP_OWNERSHIP),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, S).isa(COMPANY_MEMBERSHIP),
+                    cvar(OW).rel(OWNED_GROUP, cvar(S)).isa(GROUP_OWNERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(S)).isa(COMPANY_MEMBERSHIP),
                 ).delete(
                     cvar(OW).isa(GROUP_OWNERSHIP),
                 )
@@ -65,10 +65,10 @@ class TypeDBOwnerAgent(client: TypeDBClient, context:Context): OwnerAgent<TypeDB
                     cvar(S).isa(group.type).has(group.idType, group.idValue),
                     cvar(S_OWNER).isa(owner.type).has(owner.idType, owner.idValue),
                     cvar(C).isa(COMPANY).has(NAME, company.name),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, S).isa(COMPANY_MEMBERSHIP),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, S_OWNER).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(S)).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(S_OWNER)).isa(COMPANY_MEMBERSHIP),
                 ).insert(
-                    rel(OWNED_GROUP, S).rel(GROUP_OWNER, S_OWNER).isa(GROUP_OWNERSHIP),
+                    rel(OWNED_GROUP, cvar(S)).rel(GROUP_OWNER, cvar(S_OWNER)).isa(GROUP_OWNERSHIP),
                 )
             )
 
@@ -88,7 +88,7 @@ class TypeDBOwnerAgent(client: TypeDBClient, context:Context): OwnerAgent<TypeDB
                     match(
                         cvar(O).isa(obj.type).has(obj.idType, obj.idValue).has(PARENT_COMPANY_NAME, company.name),
                         cvar(S).isa(owner.type).has(owner.idType, owner.idValue).has(PARENT_COMPANY_NAME, company.name),
-                        rel(OWNED_OBJECT, O).rel(OBJECT_OWNER, S).isa(OBJECT_OWNERSHIP)
+                        rel(OWNED_OBJECT, cvar(O)).rel(OBJECT_OWNER, cvar(S)).isa(OBJECT_OWNERSHIP)
                     )
                 ).toList().isNotEmpty()
             ) return listOf()
@@ -99,8 +99,8 @@ class TypeDBOwnerAgent(client: TypeDBClient, context:Context): OwnerAgent<TypeDB
                 match(
                     cvar(O).isa(obj.type).has(obj.idType, obj.idValue),
                     cvar(C).isa(COMPANY).has(NAME, company.name),
-                    cvar(OW).rel(OWNED_OBJECT, O).isa(OBJECT_OWNERSHIP),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, O).isa(COMPANY_MEMBERSHIP),
+                    cvar(OW).rel(OWNED_OBJECT, cvar(O)).isa(OBJECT_OWNERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(O)).isa(COMPANY_MEMBERSHIP),
                 ).delete(
                     cvar(OW).isa(OBJECT_OWNERSHIP),
                 )
@@ -111,10 +111,10 @@ class TypeDBOwnerAgent(client: TypeDBClient, context:Context): OwnerAgent<TypeDB
                     cvar(O).isa(obj.type).has(obj.idType, obj.idValue),
                     cvar(O_OWNER).isa(owner.type).has(owner.idType, owner.idValue),
                     cvar(C).isa(COMPANY).has(NAME, company.name),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, O).isa(COMPANY_MEMBERSHIP),
-                    rel(PARENT_COMPANY, C).rel(COMPANY_MEMBER, O_OWNER).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(O)).isa(COMPANY_MEMBERSHIP),
+                    rel(PARENT_COMPANY, cvar(C)).rel(COMPANY_MEMBER, cvar(O_OWNER)).isa(COMPANY_MEMBERSHIP),
                 ).insert(
-                    rel(OWNED_OBJECT, O).rel(OBJECT_OWNER, O_OWNER).isa(OBJECT_OWNERSHIP),
+                    rel(OWNED_OBJECT, cvar(O)).rel(OBJECT_OWNER, cvar(O_OWNER)).isa(OBJECT_OWNERSHIP),
                 )
             )
 

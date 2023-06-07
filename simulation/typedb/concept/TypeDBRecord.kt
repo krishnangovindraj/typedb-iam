@@ -2,7 +2,7 @@ package com.vaticle.typedb.iam.simulation.typedb.concept
 
 import com.vaticle.typedb.iam.simulation.typedb.Labels.NUMBER
 import com.vaticle.typedb.iam.simulation.typedb.Labels.RECORD
-import com.vaticle.typedb.simulation.common.seed.RandomSource
+import com.vaticle.typedb.benchmark.framework.common.seed.RandomSource
 
 data class TypeDBRecord(val number: String): TypeDBObject(RECORD, NUMBER, number) {
 
